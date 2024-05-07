@@ -1,0 +1,27 @@
+name: Generate Doxygen Documentation
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Doxygen
+      run: sudo apt-get install doxygen -y
+
+    - name: Generate Documentation
+      run: |
+        doxygen Doxyfile
+        mv html/* $GITHUB_WORKSPACE/docs
+        rm -rf html
+
+    - name: Commit and push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Auto-generated Doxygen documentation"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
